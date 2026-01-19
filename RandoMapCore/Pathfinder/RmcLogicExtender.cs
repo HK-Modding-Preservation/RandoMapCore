@@ -105,25 +105,27 @@ internal class RmcLogicExtender(LogicManager referenceLM) : LogicExtender(refere
             }
         }
 
-        var startTerm = RandoMapCoreMod.Data.StartTerm;
-
-        // Remove start term from existing logic
-        lmb.DoLogicEdit(new(startTerm.Name, "NONE"));
-
-        foreach (var term in lmb.Terms)
+        // Manually relink start term to linked terms, only if they exist
+        if (RandoMapCoreMod.Data.StartTerm is Term startTerm && RandoMapCoreMod.Data.StartStateLinkedTerms.Any())
         {
-            if (lmb.LogicLookup.ContainsKey(term.Name))
+            // Remove start term from existing logic
+            lmb.DoLogicEdit(new(startTerm.Name, "NONE"));
+
+            foreach (var term in lmb.Terms)
             {
-                lmb.DoSubst(new(term.Name, startTerm.Name, "NONE"));
+                if (lmb.LogicLookup.ContainsKey(term.Name))
+                {
+                    lmb.DoSubst(new(term.Name, startTerm.Name, "NONE"));
+                }
             }
-        }
 
-        // Link start term to logical descendents
-        foreach (var term in RandoMapCoreMod.Data.StartStateLinkedTerms)
-        {
-            if (lmb.LogicLookup.ContainsKey(term.Name))
+            // Link start term to logical descendents
+            foreach (var term in RandoMapCoreMod.Data.StartStateLinkedTerms)
             {
-                lmb.DoLogicEdit(new(term.Name, $"ORIG | {startTerm.Name}"));
+                if (lmb.LogicLookup.ContainsKey(term.Name))
+                {
+                    lmb.DoLogicEdit(new(term.Name, $"ORIG | {startTerm.Name}"));
+                }
             }
         }
 

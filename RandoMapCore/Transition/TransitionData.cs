@@ -135,7 +135,7 @@ internal class TransitionData : HookModule
                 return true;
             }
 
-            if (name == RandoMapCoreMod.Data.StartTerm.ToString())
+            if (name == RandoMapCoreMod.Data.StartTerm?.ToString())
             {
                 scene = BenchwarpInterop.StartKey.SceneName;
                 return true;

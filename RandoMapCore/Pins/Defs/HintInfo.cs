@@ -22,7 +22,7 @@ public class HintInfo
             }
             catch
             {
-                RandoMapCoreMod.Instance.LogWarn($"Failed to make HintDef: {def}");
+                RandoMapCoreMod.Instance.LogWarn($"Failed to make HintDef: {def.name}, {def.logic}");
             }
         }
 

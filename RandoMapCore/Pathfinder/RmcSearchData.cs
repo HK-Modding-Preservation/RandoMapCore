@@ -276,7 +276,10 @@ internal class RmcSearchData : SearchData
 
         if (Interop.HasBenchwarp)
         {
-            actions.Add(new StartWarpAction(RandoMapCoreMod.Data.StartTerm));
+            if (RandoMapCoreMod.Data.StartTerm is Term startTerm)
+            {
+                actions.Add(new StartWarpAction(startTerm));
+            }
 
             foreach (var kvp in BenchwarpInterop.BenchKeys)
             {

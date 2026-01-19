@@ -14,6 +14,8 @@ internal class RmcProgressionSynchronizer(RmcLogicExtender logicExtender, RandoC
 
     protected override void ManuallyUpdateTerms()
     {
+        if (LogicExtender is DefaultLogicExtender) return;
+
         try
         {
             // Update stateless waypoint terms
