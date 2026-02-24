@@ -175,6 +175,45 @@ internal class RmcSearchData : SearchData
             }
         }
 
+        // Connection-provided actions
+        foreach (var cpa in RmcPathfinder.GetConnectionProvidedActions())
+        {
+            if (
+                !StateTermLookup.TryGetValue(cpa.Start, out var sourceTerm)
+            )
+            {
+                RandoMapCoreMod.Instance.LogWarn(
+                    $"The term {cpa.Start} does not exist in logic"
+                );
+                continue;
+            }
+
+            if (
+                !StateTermLookup.TryGetValue(cpa.Destination, out var destinationTerm)
+            )
+            {
+                RandoMapCoreMod.Instance.LogWarn(
+                    $"The term {cpa.Destination} does not exist in logic"
+                );
+                continue;
+            }
+
+            DNFLogicDef logicDef;
+            try
+            {
+                logicDef = LM.CreateDNFLogicDef(cpa.Logic);
+            }
+            catch (Exception e)
+            {
+                RandoMapCoreMod.Instance.LogWarn(
+                    $"Failed to construct LogicDef from connection-provided action - {cpa.Logic.name}: {cpa.Logic.logic} - {e}"
+                );
+                continue;
+            }
+
+            AddAction(new WaypointAction(sourceTerm, destinationTerm, logicDef, cpa.Text, null));
+        }
+
         var vanillaInfectionTransitions = _infectionTransitions.All(TransitionData.IsVanillaTransition);
 
         // Transitions

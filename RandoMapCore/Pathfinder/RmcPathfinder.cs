@@ -1,5 +1,6 @@
 ﻿using HutongGames.PlayMaker.Actions;
 using MapChanger;
+using RandoMapCore.Pathfinder.Actions;
 using RandoMapCore.Settings;
 using RandomizerCore.Logic;
 using RCPathfinder;
@@ -8,6 +9,8 @@ namespace RandoMapCore.Pathfinder;
 
 public class RmcPathfinder : HookModule
 {
+    public static event Func<IEnumerable<WaypointActionDef>> OnGetConnectionProvidedActions;
+
     internal static RmcLogicExtender LE { get; private set; }
     internal static RmcSearchData SD { get; private set; }
     internal static RmcProgressionSynchronizer PS { get; private set; }
@@ -87,6 +90,16 @@ public class RmcPathfinder : HookModule
         IT = new(SD);
         Slt = new(SD, PS.LocalPM, PSNoSequenceBreak.LocalPM);
         RM?.ResetRoute();
+    }
+
+    internal static IEnumerable<WaypointActionDef> GetConnectionProvidedActions()
+    {
+        if (OnGetConnectionProvidedActions is null) return [];
+
+        return OnGetConnectionProvidedActions
+            .GetInvocationList()
+            .Cast<Func<IEnumerable<WaypointActionDef>>>()
+            .SelectMany(f => f());
     }
 
     internal static ProgressionManager GetLocalPM()
